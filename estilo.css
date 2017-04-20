@@ -1,0 +1,55 @@
+.main {
+	padding: 30px;
+	width:100%;
+	height: 100%;
+  max-width:1232px;
+	max-height:530px;
+  margin:0 auto;
+  z-index:-2;
+	}
+
+.corpo
+{
+  width:88.65248226950355%; 
+  border: 0.3em solid #FF9C00;
+  margin:0 auto;
+}
+
+.valores{
+    width:50px;
+}
+
+h1{ 
+		font: bold 1.8em "Calibri"; 
+		text-align:left; 
+		margin: 0px 0px 0px 0px;
+		background:#FF8C00; 
+		color:#fff;
+		padding:5px 5px;
+		letter-spacing:-0.02em;
+	} 
+
+	#funcaoObjetiva
+	{
+		max-width: 88.65248226950355%;
+		margin: 20px auto;
+	}
+
+	.button
+	{
+		width:260px;
+		margin: 5px auto;
+	}
+
+	#rodape
+	{
+		width:430px;
+		margin:10px auto;
+	}
+
+	#gerarTabela
+	{
+		position:relative;
+		left:50%;
+		margin-left:-30px;
+	}
