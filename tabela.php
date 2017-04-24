@@ -13,7 +13,6 @@
 <section class='main'> 
     <div class="corpo">
 <?php
-include_once 'funcoes.php';
 if(isset($_POST['gerarTabela']))
 {
     $tabelaSimplex=array();
