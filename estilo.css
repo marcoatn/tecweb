@@ -37,8 +37,12 @@ h1{
 
 	.button
 	{
-		width:260px;
-		margin: 5px auto;
+		margin: auto;
+		font-size: 0.6em;
+		font-weight:normal;
+		color: black;
+		float:right;
+
 	}
 
 	#rodape
