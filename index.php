@@ -13,7 +13,10 @@
 <section class='main'> 
     <form action='tabela.php' method='post'>
     <div class="corpo">
-        <h1>Função Objetiva - Variaveis de Decisão</h1>
+        <h1>Função Objetiva - Variaveis de Decisão: <div class='button'>
+            <button id='addVariavelDecisao'>Inserir Variavel</button>
+            <button id='delVariavelDecisao'>Remover Variavel</button>
+        </div></h1>
         <div id='funcaoObjetiva'>
             <b style='font-size:1.5em'>F.O.(x) -></b> 
             <select id='tipoFuncao' name='tipoFuncao'>
@@ -25,16 +28,12 @@
                 <div id='exibeVariavelDecisao' hidden style='display:inline-block;'>
                 </div>
         </div>
-        <div class='button'>
-            <button id='addVariavelDecisao'>Inserir Variavel</button>
-            <button id='delVariavelDecisao'>Remover Variavel</button>
-        </div>
-        <h1>Restrições</h1>
-        <div class='button'>
+        
+        <h1>Restrições: <div class='button'>
             <button id='addRestricao'>Inserir restrição</button>
             <button id='delRestricao'>Remover restrição</button>
-        </div>
-        
+        </div></h1>
+         <br>    
         <div id='exibeRestricoes' hidden style='display:inline-block;'>
         </div>
     </div>
