@@ -17,7 +17,6 @@ include_once 'funcoes.php';
 if(isset($_POST['gerarTabela']))
 {
     $tabelaSimplex=array();
-    $tabelaTroca=array();
     $VNB = array();
     $VB = array();
     $tabelaSimplex[0][0] = 0;
@@ -108,9 +107,6 @@ if(isset($_POST['gerarTabela']))
 
     echo "<br><br>";
 
-    echo "Tabela SCS:";
-    imprimeTabela($tabelaSimplex, $VB, $VNB);
-
     algoritmoSimplexMetodo1($tabelaSimplex, $VB, $VNB);
 }
 
@@ -146,10 +142,10 @@ function imprimeTabela ($tabela, $VB, $VNB)
     echo "</tbody></table>";
 }
 
-function algoritmoSimplexMetodo1($tabelaSimplex, $VB, $VNB)
+    function algoritmoSimplexMetodo1($tabelaSimplex, $VB, $VNB)
     {
         $linha = null;
-        $coluna = null;
+        $colunaPermitida = null;
 
         //PERCORRE OS MEMBROS LIVRES PROCURANDO UM VALOR NEGATIVO
         for($i=1;$i<count($tabelaSimplex);$i++)
@@ -171,7 +167,7 @@ function algoritmoSimplexMetodo1($tabelaSimplex, $VB, $VNB)
             {
                 if($tabelaSimplex[$linha][$i] < 0)
                 {                   
-                    $coluna = $i;
+                    $colunaPermitida = $i;
                     echo "Valor negativo na mesma linha do membro livre encontrado: ".$tabelaSimplex[$linha][$i]."<br>";
                     $i = count($tabelaSimplex[$linha]);
                 }
@@ -179,134 +175,33 @@ function algoritmoSimplexMetodo1($tabelaSimplex, $VB, $VNB)
             
             //SE ENCONTRAR UM VALOR NEGATIVO NA MESMA LINHA DO MEMBRO LIVRE NEGATIVO ELE PROCURAR O MENOR VALOR
             //DE QUOCIENTE DIVIDINDO O VALOR DOS MEMBROS LIVRES PELOS VALORES DA COLUNA PERMITIDA
-            if($coluna != null)
+            if($colunaPermitida != null)
             {
                 $menorElemento = PHP_INT_MAX;
 
                 for($i=1;$i<count($tabelaSimplex);$i++)
                 {
-                    //VERIFICA SE O SINAL DE DENOMINADOR E NUMERADOR SAO IGUAIS E SE O DENOMINADOR É MAIOR QUE ZERO
-                    if(($tabelaSimplex[$i][0] > 0 && $tabelaSimplex[$i][$coluna] > 0)|| ($tabelaSimplex[$i][0] < 0 && $tabelaSimplex[$i][$coluna] < 0))
+                    //VERIFICA SE O SINAL DE DENOMINADOR E NUMERADOR SAO IGUAIS
+                    if(($tabelaSimplex[$i][0] > 0 && $tabelaSimplex[$i][$colunaPermitida] > 0) || ($tabelaSimplex[$i][0] < 0 && $tabelaSimplex[$i][$colunaPermitida] < 0))
                     {
-                        $divisao = $tabelaSimplex[$i][0]/$tabelaSimplex[$i][$coluna];
+                        $divisao = $tabelaSimplex[$i][0]/$tabelaSimplex[$i][$colunaPermitida];
 
                         if($divisao < $menorElemento)
                         {
                             $menorElemento = $divisao;
-                            $linhaElemento = $i;
+                            $linhaPermitida = $i;
                         }
                     }
                 }
 
-                echo "O menor valor de divisão encontrado foi ".$tabelaSimplex[$linhaElemento][0]."/".$tabelaSimplex[$linhaElemento][$coluna]."=".$menorElemento."<br>";
-
+                echo "O menor valor de divisão encontrado foi ".$tabelaSimplex[$linhaPermitida][0]."/".$tabelaSimplex[$linhaPermitida][$colunaPermitida]."=".$menorElemento."<br>";
+                echo "Linha Permitida: ".$VB[$linhaPermitida-1]."<br>";
+                echo "Coluna Permitida: ".$VNB[$colunaPermitida-1]."<br>";
+                
                 //AO ENCONTRAR O MENOR QUOCIENTE ENTRE AS DIVISAO CALCULA-SE O INVERSO DO ELEMENTO PERMITIDO
-                if(isset($linhaElemento))
+                if(isset($linhaPermitida))
                 {
-                    $elementoPermitido = $tabelaSimplex[$linhaElemento][$coluna];
-                    echo "Elemento Permitido: ".$elementoPermitido."<br>";
-                    $inversoElemento = 1/$elementoPermitido;
-                    echo "Elemento Permitido inverso: ".$inversoElemento."<br>";
-
-                    //multiplica a linha pelo inverso
-                    echo "Linha Permitida multiplicada pelo inverso do EP: ";
-                    for($i=0; $i < count($tabelaSimplex[$linhaElemento]); $i++)
-                    {
-                        if($i == $coluna)
-                        {
-                            echo $tabelaTroca[$linhaElemento][$i] = $inversoElemento;
-                            echo " | ";
-                        }
-                        else
-                        {
-                            echo $tabelaTroca[$linhaElemento][$i] = $tabelaSimplex[$linhaElemento][$i]*$inversoElemento;
-                            echo " | ";
-                        } 
-                    }
-                    echo "<br>";
-                    echo "Coluna Permitida multiplicada pelo negativo do EP inverso: ";
-                    //multiplica a coluna pelo negativo do inverso
-                    for($i=0; $i < count($tabelaSimplex); $i++)
-                    {
-                        if($i != $linhaElemento)
-                        {
-                            echo $tabelaTroca[$i][$coluna] = ($tabelaSimplex[$i][$coluna])*(-($inversoElemento));
-                            echo " | ";
-                        }
-                    }
-                    echo "<br>";
-
-                    //MULTIPLICA A SCS DA COLUNA PELO ELEMENTO DA LINHA PERMITIDA DA MESMA COLUNA
-                    for($i=0; $i < count($tabelaSimplex); $i++)
-                    {
-                        for($j=0; $j < count($tabelaSimplex[$i]); $j++)
-                        {
-                            if($i != $linhaElemento && $j != $coluna)
-                            {
-                                $tabelaTroca[$i][$j] = ($tabelaSimplex[$linhaElemento][$j])*($tabelaTroca[$i][$coluna]);
-                            }
-                        }
-                        
-                    }
-
-                    echo "Tabela SCI:";
-                    imprimeTabela($tabelaTroca, $VB, $VNB);
-                    echo "<br>";
-
-                    $tabelaSimplexAux = array();
-
-                    //INVERTE A POSIÇAO DA VARIAVEL BASICA COM A POSICAO DA VARIAVEL NAO BASICA
-                    $aux = $VNB[$coluna-1];
-                    $VNB[$coluna-1] = $VB[$linhaElemento-1];
-                    $VB[$linhaElemento-1] = $aux;
-
-                    //INSERE A LINHA E COLUNA PERMITIDA NAS SCS DA NOVA TABELA
-                    for($i=0; $i < count($tabelaSimplex); $i++)
-                    {
-                        for($j=0; $j < count($tabelaSimplex[$i]); $j++)
-                        {
-                            if($i == $linhaElemento || $j == $coluna)
-                            {
-                                $tabelaSimplexAux[$i][$j] = $tabelaTroca[$i][$j];
-                                
-                            }
-                        }
-                        
-                    }
-
-                    //INSERE OS DEMAIS VALORES NA NOVA TABELA SOMANDO CADA SCS COM SUA RESPECTIVA SCI
-                    for($i=0; $i < count($tabelaSimplex); $i++)
-                    {
-                        for($j=0; $j < count($tabelaSimplex[$i]); $j++)
-                        {
-                            if($i != $linhaElemento && $j != $coluna)
-                            {
-                                $tabelaSimplexAux[$i][$j] = $tabelaSimplex[$i][$j]+$tabelaTroca[$i][$j];                        
-                            }
-                        }
-                        
-                    }
-
-                    echo "Nova tabela: ";
-                    imprimeTabela($tabelaSimplexAux, $VB, $VNB);
-
-                    for($i=1;$i<count($tabelaSimplexAux);$i++)
-                    {
-                        if($tabelaSimplexAux[$i][0] < 0)
-                        {
-                            $negativo = $tabelaSimplexAux[$i][0];
-                        }
-                    }
-
-                    if(isset($negativo))
-                    {   
-                        algoritmoSimplexMetodo1($tabelaSimplexAux, $VB, $VNB);
-                    }
-                    else
-                    {
-                        echo "CHAMA O METODO DOIS MEU DEUUUUUS DO CEU";
-                    }
-                        
+                    algoritmoTroca($tabelaSimplex, $VB, $VNB, $linhaPermitida, $colunaPermitida);
                 }
             }
             else
@@ -315,10 +210,201 @@ function algoritmoSimplexMetodo1($tabelaSimplex, $VB, $VNB)
             }
         }
         else
-        {
-            echo "CHAMA O METODO DOIS MEU DEUUUUUS DO CEU";
+        {   echo "<br> ****Inicia Segundo Método**** <br> ";
+            algoritmoSimplexMetodo2($tabelaSimplex, $VB, $VNB);
         }
     }
+
+    function algoritmoSimplexMetodo2($tabelaSimplex, $VB, $VNB)
+    {
+        $colunaPermitida = null;
+
+        //PERCORRE A F(X) PROCURANDO UM VALOR POSITIVO 
+        for($i=1;$i<count($tabelaSimplex);$i++)
+        {
+            $tabelaSimplex[0][$i];
+            //SE ENCONTRA O VALOR POSITIVO ELE SALVA O NUMERO DA COLUNA
+            if($tabelaSimplex[0][$i] > 0)
+            {
+                $colunaPermitida = $i;
+                echo "Valor Positivo da f(x): ".$tabelaSimplex[0][$i]."<br>";
+                $i = count($tabelaSimplex);
+            }
+        }
+
+        //SE VALOR POSITIVO É ENCONTRADO ENTAO ELE PROCURA OUTRO VALOR POSITIVO 
+        // NA MESMA COLUNA ONDE O VALOR POSITIVO ANTERIOR FOI ENCONTRADO
+        if($colunaPermitida != null)
+        {
+            $positivoExiste = false;
+
+            for($i=1;$i<count($tabelaSimplex);$i++)
+            {
+                if($tabelaSimplex[$i][$colunaPermitida] > 0)
+                { 
+                    echo "Valor positivo na mesma linha do membro livre encontrado: ".$tabelaSimplex[$i][$colunaPermitida]."<br>";
+                    $positivoExiste=true;
+                    $i = count($tabelaSimplex);
+                }
+            }
+            
+            //SE ENCONTRAR UM VALOR POSITVO NA MESMA COLUNA ELE PROCURA O MENOR VALOR
+            //DE QUOCIENTE DIVIDINDO O VALOR DOS MEMBROS LIVRES PELOS VALORES DA COLUNA PERMITIDA
+            if($positivoExiste == true)
+            {
+                $menorElemento = PHP_INT_MAX;
+
+                for($i=1;$i<count($tabelaSimplex);$i++)
+                {
+                    //VERIFICA SE O SINAL DO DENOMINADOR E NUMERADOR SAO IGUAIS
+                    if(($tabelaSimplex[$i][0] > 0 && $tabelaSimplex[$i][$colunaPermitida] > 0)|| ($tabelaSimplex[$i][0] < 0 && $tabelaSimplex[$i][$colunaPermitida] < 0))
+                    {
+                        $divisao = $tabelaSimplex[$i][0]/$tabelaSimplex[$i][$colunaPermitida];
+
+                        if($divisao < $menorElemento)
+                        {
+                            $menorElemento = $divisao;
+                            $linhaPermitida = $i;
+                        }
+                    }
+                }
+
+                echo "O menor valor de divisão encontrado foi ".$tabelaSimplex[$linhaPermitida][0]."/".$tabelaSimplex[$linhaPermitida][$colunaPermitida]."=".$menorElemento."<br>";
+                echo "Linha Permitida: ".$VB[$linhaPermitida-1]."<br>";
+                echo "Coluna Permitida: ".$VNB[$colunaPermitida-1]."<br>";
+                algoritmoTroca($tabelaSimplex, $VB, $VNB, $linhaPermitida, $colunaPermitida);  
+                        
+            }
+            else
+            {
+                echo "SOLUÇÃO ÓTIMA NAO EXISTE, A SOLUÇÃO É ILIMITADA";
+            }
+        }
+        else
+        {
+            echo "SOLUÇÃO OTIMA ENCONTRADA";
+        }
+    }
+
+    function algoritmoTroca($tabelaSimplex, $VB, $VNB, $linhaPermitida, $colunaPermitida)
+    {
+        $tabelaTroca=array();
+
+        //AO ENCONTRAR O MENOR QUOCIENTE ENTRE AS DIVISOES CALCULA-SE O INVERSO DO ELEMENTO PERMITIDO
+            $elementoPermitido = $tabelaSimplex[$linhaPermitida][$colunaPermitida];
+            echo "Elemento Permitido: ".$elementoPermitido."<br>";
+            $inversoElemento = 1/$elementoPermitido;
+            echo "Elemento Permitido inverso: ".$inversoElemento."<br>";
+
+            //multiplica a linha pelo inverso
+            echo "Linha Permitida multiplicada pelo inverso do EP: <table border='1'><tr>";
+            for($i=0; $i < count($tabelaSimplex[$linhaPermitida]); $i++)
+            {
+                if($i == $colunaPermitida)
+                {
+                    $tabelaTroca[$linhaPermitida][$i] = $inversoElemento;
+                    echo "<td>".$tabelaTroca[$linhaPermitida][$i]."</td>";
+                }
+                else
+                {
+                    $tabelaTroca[$linhaPermitida][$i] = $tabelaSimplex[$linhaPermitida][$i]*$inversoElemento;
+                    echo "<td>".$tabelaTroca[$linhaPermitida][$i]."</td>";
+                } 
+            }
+            echo "</tr></table><br>";
+            echo "Coluna Permitida multiplicada pelo negativo do EP inverso: <table border='1'>";
+            //multiplica a coluna pelo negativo do inverso
+            for($i=0; $i < count($tabelaSimplex); $i++)
+            {
+                if($i != $linhaPermitida)
+                {
+                    $tabelaTroca[$i][$colunaPermitida] = ($tabelaSimplex[$i][$colunaPermitida])*(-($inversoElemento));
+                    echo "<tr><td>".$tabelaTroca[$i][$colunaPermitida]."</td></tr> ";
+                }
+            }
+            echo "<table><br>";
+
+            //MULTIPLICA A SCS DA COLUNA PELO ELEMENTO DA LINHA PERMITIDA DA MESMA COLUNA
+            echo "Multiplica a SCS da coluna pelo elemento da linha permitida da mesma coluna:<br>";
+            for($i=0; $i < count($tabelaSimplex); $i++)
+            {
+                for($j=0; $j < count($tabelaSimplex[$i]); $j++)
+                {
+                    if($i != $linhaPermitida && $j != $colunaPermitida)
+                    {
+                        $tabelaTroca[$i][$j] = ($tabelaSimplex[$linhaPermitida][$j])*($tabelaTroca[$i][$colunaPermitida]);
+                        echo $tabelaSimplex[$linhaPermitida][$j]."*".$tabelaTroca[$i][$colunaPermitida]."=". $tabelaTroca[$i][$j]."<br>";
+                    }
+                }
+                        
+            }
+
+            echo "Tabela SCS:";
+            imprimeTabela($tabelaSimplex, $VB, $VNB);
+
+            echo "Tabela SCI:";
+            imprimeTabela($tabelaTroca, $VB, $VNB);
+            echo "<br>";    
+
+            $tabelaSimplexAux = array();
+
+            //INVERTE A POSIÇAO DA VARIAVEL BASICA COM A POSICAO DA VARIAVEL NAO BASICA
+            
+            echo "Variavel não basica ".$VNB[$colunaPermitida-1]." troca com variavel basica: ".$VB[$linhaPermitida-1]."<br>";
+            $aux = $VNB[$colunaPermitida-1];
+            $VNB[$colunaPermitida-1] = $VB[$linhaPermitida-1];
+            $VB[$linhaPermitida-1] = $aux;
+
+            //INSERE A LINHA E COLUNA PERMITIDA NAS SCS DA NOVA TABELA
+            for($i=0; $i < count($tabelaSimplex); $i++)
+            {
+                for($j=0; $j < count($tabelaSimplex[$i]); $j++)
+                {
+                    if($i == $linhaPermitida || $j == $colunaPermitida)
+                    {
+                        $tabelaSimplexAux[$i][$j] = $tabelaTroca[$i][$j];                                
+                    }
+                }
+                            
+            }
+
+            //INSERE OS DEMAIS VALORES NA NOVA TABELA SOMANDO CADA SCS COM SUA RESPECTIVA SCI
+            for($i=0; $i < count($tabelaSimplex); $i++)
+            {
+                for($j=0; $j < count($tabelaSimplex[$i]); $j++)
+                {
+                    if($i != $linhaPermitida && $j != $colunaPermitida)
+                    {
+                        $tabelaSimplexAux[$i][$j] = $tabelaSimplex[$i][$j]+$tabelaTroca[$i][$j];                        
+                    }
+                }
+                            
+            }
+
+            echo "Nova tabela criada com a soma dos valores das SCS com as SCI: ";
+            imprimeTabela($tabelaSimplexAux, $VB, $VNB);
+
+            for($i=1;$i<count($tabelaSimplexAux);$i++)
+            {
+                if($tabelaSimplexAux[$i][0] < 0)
+                {
+                    $negativo = $tabelaSimplexAux[$i][0];
+                }
+            }
+
+            if(isset($negativo))
+            {   
+                algoritmoSimplexMetodo1($tabelaSimplexAux, $VB, $VNB);
+            }
+            else
+            {
+                algoritmoSimplexMetodo2($tabelaSimplexAux, $VB, $VNB);
+            }
+    }
+
+
+    
+
         ?>
     </div>
 </section>
