@@ -4,16 +4,15 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Método Simplex</title>
-<link rel="stylesheet" type="text/css" href="http://10.4.5.10/intra/datatables.css"/>
-<script type="text/javascript" src="http://10.4.5.10/intra/datatables.js"></script>
-<link rel="stylesheet" type="text/css" href="http://10.4.5.10/simplex/estilo.css"/>
-<script type="text/javascript" src="http://10.4.5.10/simplex/scripts.js"></script>
+<link rel="stylesheet" type="text/css" href="datatables.css"/>
+<script type="text/javascript" src="datatables.js"></script>
+<link rel="stylesheet" type="text/css" href="estilo.css"/>
+<script type="text/javascript" src="scripts.js"></script>
 </head>
 <body>
 <section class='main'> 
     <div class="corpo">
 <?php
-include_once 'funcoes.php';
 if(isset($_POST['gerarTabela']))
 {
     $tabelaSimplex=array();
