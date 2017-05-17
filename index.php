@@ -13,16 +13,16 @@
 <section class='main'> 
     <form action='tabela.php' method='post'>
     <div class="corpo">
-        <h1>Função Objetiva - Variaveis de Decisão: <div class='button'>
+        <h1>Variaveis de Decisão: <div class='button'>
             <button id='addVariavelDecisao'>Inserir Variavel</button>
             <button id='delVariavelDecisao'>Remover Variavel</button>
         </div></h1>
         <div id='funcaoObjetiva'>
             <b style='font-size:1.5em'>F.O.(x) -></b> 
-            <select id='tipoFuncao' name='tipoFuncao'>
+            <select id='tipoFuncao' name='tipoFuncao' required>
                 <option value=''></option>
-                <option value='max'>MAX</option>
-                <option value='min'>MIN</option>
+                <option value='MAX'>MAX</option>
+                <option value='MIN'>MIN</option>
             </select>
             <b style='font-size:1.5em'> Z = </b>
                 <div id='exibeVariavelDecisao' hidden style='display:inline-block;'>
@@ -38,8 +38,8 @@
         </div>
     </div>
     <div id='rodape'>
-        Total de variaveis de decisão: <input class='valores' type='text' id='totalVariaveis' name='totalVariaveis'>
-        Total de restrições: <input class='valores' type='text' id='totalRestricoes' name = 'totalRestricoes'>
+        Total de variaveis de decisão: <input class='valores' type='text' id='totalVariaveis' name='totalVariaveis' readonly>
+        Total de restrições: <input class='valores' type='text' id='totalRestricoes' name = 'totalRestricoes' readonly>
     </div>
     <button name='gerarTabela' id='gerarTabela'>Gerar Tabela</button>
     </form>
